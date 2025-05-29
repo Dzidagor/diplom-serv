@@ -20,19 +20,13 @@ def load_model(days_count):
         logger.error(f"Модель не найдена: {model_path}")
         return None
     
-    loaded_object = joblib.load(model_path)
-    logger.debug(f"Загруженный объект: тип = {type(loaded_object)}")
-    logger.debug(f"Содержимое объекта: {loaded_object}")
-    
-    # Если загружен словарь, пытаемся получить модель из него
-    if isinstance(loaded_object, dict):
-        if 'model' in loaded_object:
-            return loaded_object['model']
-        else:
-            logger.error(f"В загруженном словаре нет ключа 'model'. Доступные ключи: {loaded_object.keys()}")
-            return None
-    
-    return loaded_object
+    try:
+        model = joblib.load(model_path)
+        logger.debug(f"Модель успешно загружена: {type(model)}")
+        return model
+    except Exception as e:
+        logger.error(f"Ошибка при загрузке модели: {str(e)}")
+        return None
 
 def validate_input_data(data):
     """Валидация входных данных"""
