@@ -61,10 +61,10 @@ def predict():
             # Получение предсказаний
             predictions = model.predict(X)
             if isinstance(predictions, np.ndarray):
-                predictions = predictions.flatten()
+                predictions = predictions.flatten().tolist()
             
             # Формирование полного временного ряда
-            full_timeline = input_days + predictions.tolist()
+            full_timeline = input_days + predictions
             
             return jsonify({
                 'predictions': full_timeline,
