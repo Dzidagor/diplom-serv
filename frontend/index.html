@@ -143,7 +143,7 @@
                         </label>
                         <input type="number" class="form-control" id="day6" placeholder="Введите количество">
                     </div>
-                    <div class="input-group">
+                    <div class="input-wrapper">
                         <label class="form-label" for="day7">
                             <span class="material-icons">calendar_today</span>
                             День 7
@@ -224,7 +224,7 @@
 
                 const result = await response.json();
                 if (response.ok) {
-                    updateChart(result.predictions);
+                    updateChart(result.predictions, result.days_used);
                     showAlert('Прогноз успешно сформирован!', 'success');
                 } else {
                     showAlert('Ошибка: ' + (result.error || 'Неизвестная ошибка'));
@@ -234,19 +234,19 @@
             }
         }
 
-        function updateChart(predictions) {
+        function updateChart(predictions, daysUsed) {
             const ctx = document.getElementById('predictionChart').getContext('2d');
             
             if (chart) {
                 chart.destroy();
             }
 
-            // Определяем количество фактических дней (не null значения)
-            const actualDaysCount = predictions.slice(0, 7).filter(x => x !== null).length;
+            // Обрабатываем отрицательные значения в прогнозах
+            predictions = predictions.map(val => val < 0 ? 0 : val);
             
             // Создаем массивы данных для графиков
-            const actualData = predictions.slice(0, actualDaysCount);
-            const predictedData = predictions.slice(actualDaysCount - 1); // Включаем последний фактический день
+            const actualData = predictions.slice(0, daysUsed);
+            const predictedData = predictions.slice(daysUsed - 1); // Включаем последний фактический день
 
             chart = new Chart(ctx, {
                 type: 'line',
@@ -265,7 +265,7 @@
                         },
                         {
                             label: 'Прогноз',
-                            data: [...Array(actualDaysCount - 1).fill(null), ...predictedData],
+                            data: [...Array(daysUsed - 1).fill(null), ...predictedData],
                             borderColor: 'rgb(255, 99, 132)',
                             backgroundColor: 'rgba(255, 99, 132, 0.1)',
                             tension: 0.4,
