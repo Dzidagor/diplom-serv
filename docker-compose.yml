@@ -6,10 +6,10 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - .:/app
-      - pip_cache:/root/.cache/pip
+      - ./model:/app/model
     environment:
       - FLASK_ENV=production
+      - PYTHONUNBUFFERED=1  # Для корректного вывода логов
 
 volumes:
   pip_cache: 

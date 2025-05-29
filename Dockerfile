@@ -8,18 +8,24 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# Установка зависимостей
+# Копируем requirements.txt и устанавливаем зависимости
 COPY requirements.txt .
-RUN pip install --no-cache-dir --prefer-binary -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Создаем отдельный слой для pip cache
 RUN mkdir -p /root/.cache/pip && chmod -R 777 /root/.cache/pip
 
-# Копирование файлов проекта
+# Копируем все файлы приложения
 COPY . .
+
+# Создаем директорию для моделей, если её нет
+RUN mkdir -p model
+
+# Проверяем наличие моделей после копирования
+RUN ls -la model/
 
 # Открываем порт
 EXPOSE 5000
 
 # Запуск приложения
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "backend.app:app", "--workers", "4"] 
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "backend.app:app"] 

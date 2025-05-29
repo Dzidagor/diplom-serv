@@ -17,16 +17,38 @@ def load_model(days_count):
     """Загрузка модели в зависимости от количества дней"""
     model_path = f'model/model_{days_count}days.joblib'
     logger.debug(f"Пытаемся загрузить модель: {model_path}")
+    
+    # Проверяем абсолютный путь к файлу
+    abs_path = os.path.abspath(model_path)
+    logger.debug(f"Абсолютный путь к модели: {abs_path}")
+    
+    # Проверяем существование файла
     if not os.path.exists(model_path):
         logger.error(f"Модель не найдена: {model_path}")
+        # Проверяем содержимое директории
+        model_dir = os.path.dirname(model_path)
+        if os.path.exists(model_dir):
+            logger.debug(f"Содержимое директории {model_dir}:")
+            for file in os.listdir(model_dir):
+                logger.debug(f"- {file}")
+        else:
+            logger.error(f"Директория {model_dir} не существует")
         return None
-
+    
     try:
+        # Проверяем размер файла
+        file_size = os.path.getsize(model_path)
+        logger.debug(f"Размер файла модели: {file_size} байт")
+        
+        # Загружаем модель
         model_data = joblib.load(model_path)
-        logger.debug(f"Модель успешно загружена: {type(model_data)}")
+        logger.debug(f"Тип загруженных данных: {type(model_data)}")
+        logger.debug(f"Ключи в model_data: {model_data.keys() if isinstance(model_data, dict) else 'не словарь'}")
+        
         return model_data
     except Exception as e:
         logger.error(f"Ошибка при загрузке модели: {str(e)}")
+        logger.exception("Полный стек ошибки:")
         return None
 
 
@@ -102,10 +124,12 @@ def predict():
 
         except Exception as e:
             logger.error(f"Ошибка при выполнении предсказания: {str(e)}")
+            logger.exception("Полный стек ошибки:")
             return jsonify({'error': f'Ошибка при выполнении предсказания: {str(e)}'}), 500
 
     except Exception as e:
         logger.error(f"Общая ошибка: {str(e)}")
+        logger.exception("Полный стек ошибки:")
         return jsonify({'error': str(e)}), 500
 
 
