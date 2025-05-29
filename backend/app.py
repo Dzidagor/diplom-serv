@@ -57,16 +57,21 @@ def predict():
         # Подготовка данных для предсказания
         X = np.array(input_days).reshape(1, -1)
         
-        # Получение предсказаний
-        predictions = model.predict(X)[0]
-        
-        # Формирование полного временного ряда
-        full_timeline = input_days + predictions.tolist()
-        
-        return jsonify({
-            'predictions': full_timeline,
-            'days_used': days_count
-        })
+        try:
+            # Получение предсказаний
+            predictions = model.predict(X)
+            if isinstance(predictions, np.ndarray):
+                predictions = predictions.flatten()
+            
+            # Формирование полного временного ряда
+            full_timeline = input_days + predictions.tolist()
+            
+            return jsonify({
+                'predictions': full_timeline,
+                'days_used': days_count
+            })
+        except Exception as e:
+            return jsonify({'error': f'Ошибка при выполнении предсказания: {str(e)}'}), 500
         
     except Exception as e:
         return jsonify({'error': str(e)}), 500
