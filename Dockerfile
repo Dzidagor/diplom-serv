@@ -6,6 +6,9 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Создаем отдельный слой для pip cache
+RUN mkdir -p /root/.cache/pip && chmod -R 777 /root/.cache/pip
+
 # Копирование файлов проекта
 COPY . .
 

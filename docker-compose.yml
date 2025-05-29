@@ -7,5 +7,9 @@ services:
       - "5000:5000"
     volumes:
       - .:/app
+      - pip_cache:/root/.cache/pip
     environment:
-      - FLASK_ENV=production 
+      - FLASK_ENV=production
+
+volumes:
+  pip_cache: 
