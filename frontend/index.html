@@ -241,8 +241,12 @@
                 chart.destroy();
             }
 
-            const actualData = predictions.slice(0, 7).map((value, index) => value || null);
-            const predictedData = predictions.slice(7);
+            // Определяем количество фактических дней (не null значения)
+            const actualDaysCount = predictions.slice(0, 7).filter(x => x !== null).length;
+            
+            // Создаем массивы данных для графиков
+            const actualData = predictions.slice(0, actualDaysCount);
+            const predictedData = predictions.slice(actualDaysCount - 1); // Включаем последний фактический день
 
             chart = new Chart(ctx, {
                 type: 'line',
@@ -251,7 +255,7 @@
                     datasets: [
                         {
                             label: 'Фактические данные',
-                            data: actualData,
+                            data: [...actualData, ...Array(predictions.length - actualData.length).fill(null)],
                             borderColor: 'rgb(75, 192, 192)',
                             backgroundColor: 'rgba(75, 192, 192, 0.1)',
                             tension: 0.4,
@@ -261,7 +265,7 @@
                         },
                         {
                             label: 'Прогноз',
-                            data: [...Array(7).fill(null), ...predictedData],
+                            data: [...Array(actualDaysCount - 1).fill(null), ...predictedData],
                             borderColor: 'rgb(255, 99, 132)',
                             backgroundColor: 'rgba(255, 99, 132, 0.1)',
                             tension: 0.4,

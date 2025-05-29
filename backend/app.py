@@ -139,8 +139,12 @@ def predict():
             predictions = model.predict(X_scaled)
             logger.debug(f"Получены предсказания: {predictions}")
             
+            # Округляем все значения до целых чисел
+            input_days = [round(x) for x in input_days]
+            predictions = np.round(predictions[0]).astype(int).tolist()
+            
             # Формирование полного временного ряда
-            full_timeline = input_days + predictions[0].tolist()
+            full_timeline = input_days + predictions
             logger.debug(f"Полный временной ряд: {full_timeline}")
             
             return jsonify({
