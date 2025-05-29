@@ -4,16 +4,13 @@ FROM python:3.9-slim
 RUN apt-get update && apt-get install -y \
     build-essential \
     gcc \
-    gfortran \
-    python3-dev \
-    libopenblas-dev \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
 # Установка зависимостей
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --prefer-binary -r requirements.txt
 
 # Создаем отдельный слой для pip cache
 RUN mkdir -p /root/.cache/pip && chmod -R 777 /root/.cache/pip
