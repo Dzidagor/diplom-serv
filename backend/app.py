@@ -46,6 +46,13 @@ def load_model(days_count):
         file_size = os.path.getsize(model_path)
         logger.debug(f"Размер файла модели: {file_size} байт")
         
+        # Выводим текущие версии библиотек
+        logger.debug("Текущие версии библиотек:")
+        logger.debug(f"Python: {'.'.join(map(str, os.sys.version_info[:3]))}")
+        logger.debug(f"NumPy: {np.__version__}")
+        logger.debug(f"Scikit-learn: {sklearn.__version__}")
+        logger.debug(f"Joblib: {joblib.__version__}")
+        
         # Загружаем модель
         model_data = joblib.load(model_path)
         logger.debug(f"Тип загруженных данных: {type(model_data)}")

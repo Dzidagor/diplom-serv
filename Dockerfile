@@ -1,4 +1,4 @@
-FROM python:3.9-slim
+FROM python:3.10-slim
 
 # Установка системных зависимостей
 RUN apt-get update && apt-get install -y \
@@ -28,4 +28,6 @@ RUN ls -la model/
 EXPOSE 5000
 
 # Запуск приложения
+ENV FLASK_APP=backend/app.py
+ENV FLASK_ENV=production
 CMD ["gunicorn", "--bind", "0.0.0.0:5000", "backend.app:app"] 
