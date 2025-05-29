@@ -40,25 +40,27 @@
             gap: 20px;
             margin-bottom: 30px;
         }
-        .input-group {
-            position: relative;
+        .input-wrapper {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
         }
         .form-label {
             font-weight: 500;
             color: #495057;
             display: flex;
             align-items: center;
-            margin: 0;
+            margin-bottom: 0;
+        }
+        .form-label .material-icons {
+            margin-right: 8px;
         }
         .form-control {
+            width: 100%;
             padding: 10px;
             border-radius: 8px;
             border: 2px solid #dee2e6;
             transition: all 0.3s;
-            width: 100%;
         }
         .form-control:focus {
             border-color: #007bff;
@@ -81,7 +83,6 @@
         }
         .material-icons {
             vertical-align: middle;
-            margin-right: 8px;
         }
         .alert {
             border-radius: 8px;
@@ -100,42 +101,42 @@
             </div>
             <div class="card-body">
                 <div class="input-container">
-                    <div class="input-group">
+                    <div class="input-wrapper">
                         <label class="form-label" for="day1">
                             <span class="material-icons">calendar_today</span>
                             День 1
                         </label>
                         <input type="number" class="form-control" id="day1" placeholder="Введите количество">
                     </div>
-                    <div class="input-group">
+                    <div class="input-wrapper">
                         <label class="form-label" for="day2">
                             <span class="material-icons">calendar_today</span>
                             День 2
                         </label>
                         <input type="number" class="form-control" id="day2" placeholder="Введите количество">
                     </div>
-                    <div class="input-group">
+                    <div class="input-wrapper">
                         <label class="form-label" for="day3">
                             <span class="material-icons">calendar_today</span>
                             День 3
                         </label>
                         <input type="number" class="form-control" id="day3" placeholder="Введите количество">
                     </div>
-                    <div class="input-group">
+                    <div class="input-wrapper">
                         <label class="form-label" for="day4">
                             <span class="material-icons">calendar_today</span>
                             День 4
                         </label>
                         <input type="number" class="form-control" id="day4" placeholder="Введите количество">
                     </div>
-                    <div class="input-group">
+                    <div class="input-wrapper">
                         <label class="form-label" for="day5">
                             <span class="material-icons">calendar_today</span>
                             День 5
                         </label>
                         <input type="number" class="form-control" id="day5" placeholder="Введите количество">
                     </div>
-                    <div class="input-group">
+                    <div class="input-wrapper">
                         <label class="form-label" for="day6">
                             <span class="material-icons">calendar_today</span>
                             День 6
