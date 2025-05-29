@@ -1,5 +1,14 @@
 FROM python:3.9-slim
 
+# Установка системных зависимостей
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    gcc \
+    gfortran \
+    python3-dev \
+    libopenblas-dev \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 # Установка зависимостей
