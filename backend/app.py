@@ -25,7 +25,7 @@ def validate_input_data(data):
         if value is not None:
             if not isinstance(value, (int, float)) or value < 0:
                 return False, "Значения должны быть неотрицательными числами"
-            days.append(value)
+            days.append(float(value))
         else:
             break
     
@@ -46,7 +46,7 @@ def predict():
         if not is_valid:
             return jsonify({'error': result}), 400
         
-        input_days = result
+        input_days = result  # Это уже список чисел
         days_count = len(input_days)
         
         # Загрузка соответствующей модели
@@ -61,9 +61,11 @@ def predict():
             # Получение предсказаний
             predictions = model.predict(X)
             if isinstance(predictions, np.ndarray):
-                predictions = predictions.flatten().tolist()
+                predictions = predictions.ravel().tolist()  # преобразуем в одномерный список
+            elif not isinstance(predictions, list):
+                predictions = [float(predictions)]  # если одно число
             
-            # Формирование полного временного ряда
+            # Формирование полного временного ряда (оба списка уже содержат числа)
             full_timeline = input_days + predictions
             
             return jsonify({
