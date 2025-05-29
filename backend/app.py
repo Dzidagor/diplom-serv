@@ -3,6 +3,11 @@ from flask_cors import CORS
 import numpy as np
 import joblib
 import os
+import logging
+
+# Настройка логирования
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__, static_folder='../frontend', static_url_path='')
 CORS(app)
@@ -10,12 +15,17 @@ CORS(app)
 def load_model(days_count):
     """Загрузка модели в зависимости от количества дней"""
     model_path = f'model/model_{days_count}days.joblib'
+    logger.debug(f"Пытаемся загрузить модель: {model_path}")
     if not os.path.exists(model_path):
+        logger.error(f"Модель не найдена: {model_path}")
         return None
-    return joblib.load(model_path)
+    model = joblib.load(model_path)
+    logger.debug(f"Модель успешно загружена: {type(model)}")
+    return model
 
 def validate_input_data(data):
     """Валидация входных данных"""
+    logger.debug(f"Получены данные для валидации: {data}")
     if not data:
         return False, "Данные не предоставлены"
     
@@ -29,6 +39,7 @@ def validate_input_data(data):
         else:
             break
     
+    logger.debug(f"Валидированные данные: {days}")
     if not days:
         return False, "Необходимо предоставить данные хотя бы за один день"
     
@@ -41,13 +52,17 @@ def index():
 @app.route('/api/predict', methods=['POST'])
 def predict():
     try:
+        logger.debug(f"Получен POST запрос с данными: {request.json}")
+        
         # Валидация входных данных
         is_valid, result = validate_input_data(request.json)
         if not is_valid:
+            logger.error(f"Ошибка валидации: {result}")
             return jsonify({'error': result}), 400
         
-        input_days = result  # Это уже список чисел
+        input_days = result
         days_count = len(input_days)
+        logger.debug(f"Количество дней: {days_count}, входные данные: {input_days}")
         
         # Загрузка соответствующей модели
         model = load_model(days_count)
@@ -56,26 +71,40 @@ def predict():
         
         # Подготовка данных для предсказания
         X = np.array(input_days).reshape(1, -1)
+        logger.debug(f"Подготовленные данные для предсказания: {X}")
         
         try:
             # Получение предсказаний
             predictions = model.predict(X)
-            if isinstance(predictions, np.ndarray):
-                predictions = predictions.ravel().tolist()  # преобразуем в одномерный список
-            elif not isinstance(predictions, list):
-                predictions = [float(predictions)]  # если одно число
+            logger.debug(f"Тип предсказаний: {type(predictions)}, значение: {predictions}")
             
-            # Формирование полного временного ряда (оба списка уже содержат числа)
-            full_timeline = input_days + predictions
+            if isinstance(predictions, np.ndarray):
+                predictions = predictions.ravel().tolist()
+            else:
+                predictions = [float(predictions)]
+            
+            logger.debug(f"Предсказания после преобразования: {predictions}")
+            logger.debug(f"Тип input_days: {type(input_days)}, тип predictions: {type(predictions)}")
+            
+            # Формирование полного временного ряда
+            try:
+                full_timeline = input_days + predictions
+                logger.debug(f"Полный временной ряд: {full_timeline}")
+            except Exception as e:
+                logger.error(f"Ошибка при объединении списков: {str(e)}")
+                logger.error(f"input_days: {input_days}, predictions: {predictions}")
+                raise
             
             return jsonify({
                 'predictions': full_timeline,
                 'days_used': days_count
             })
         except Exception as e:
+            logger.error(f"Ошибка при выполнении предсказания: {str(e)}")
             return jsonify({'error': f'Ошибка при выполнении предсказания: {str(e)}'}), 500
         
     except Exception as e:
+        logger.error(f"Общая ошибка: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
